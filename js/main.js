@@ -51,6 +51,7 @@ function setUpBoard(){
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
         rowDiv.id = `row-${r}`;
+        if(r === 0) rowDiv.classList.add('active'); //add class active at the first row to begin the game
 
         // create guess slots
         const slotsContainer = document.createElement('div');
@@ -71,6 +72,24 @@ function setUpBoard(){
 setUpBoard();
 
 // ---LOGIC TO DISPLAY ON THE BOARD USER'S GUESS--- 
+function updateGuessDisplay(){
+    const activeRow = document.getElementById(`row-${state.currentTurn}`);
+    if(!activeRow) return; //exclusively the current row
+
+    const slots = document.querySelectorAll('.guess-slot');
+    slots.forEach((slot, index) => {
+        // clean before adding any class
+        slot.className = 'guess-slot';
+
+        // check if currentGuess has a color at this index so it can add it to the slot
+        if(state.currentGuess[index]){
+            slot.classList.add(state.currentGuess[index]);
+            
+            console.log(slot);
+        }
+
+    })
+}
 
 // ===EVENT LISTENERS===
 
