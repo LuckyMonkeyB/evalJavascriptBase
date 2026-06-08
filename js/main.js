@@ -34,17 +34,22 @@ const resetBtn = document.getElementById('reset-btn');
 // ---LOGIC TO INITIALIZE THE GAME---
 function initGame(){
     // make sure everything is cleaning before starting the game
-    state.secretCode= [];
-    state.currentGuess= [];
-    state.currentTurn= 0;
-    state.isOver= false;
+    state.secretCode = [];
+    state.currentGuess = [];
+    state.currentTurn = 0;
+    state.isOver = false;
+    
+    resultText.textContent = '';
+    secretStatusText.classList.remove('hidden');
+    secretSlotsContainer.classList.add('hidden');
 
-    generateScretCode();
+
+    generateSecretCode();
     setUpBoard();
 }
 
 // ---LOGIC TO GENERATE RANDOM SECRET CODE---
-function generateScretCode(){
+function generateSecretCode(){
     state.secretCode = []; //cleaning before generating new code
 
     for(let i = 0; i < CODE_LENGTH; i++){
@@ -60,7 +65,8 @@ function generateScretCode(){
 
 // ---LOGIC TO GENERATE DYNAMICALLY ROWS IN THE BOARD FOR USER GUESSES---
 function setUpBoard(){
-    boardContainer.innerHTML = ''; //cleaning 
+    boardContainer.innerHTML = ''; //cleaning
+
     for(let r = 0; r < ATTEMPTS; r++){
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
@@ -92,7 +98,7 @@ function updateGuessDisplay(){
 
     const slots = document.querySelectorAll('.guess-slot');
     slots.forEach((slot, index) => {
-        // clean before adding any class to prevent previous classes addition
+        // clean before adding any class to prevent having previous classes
         slot.className = 'guess-slot';
 
         // check if currentGuess has a color at this index so it can add it to the slot
@@ -148,6 +154,16 @@ function checkGuess(secret, guess){
     return { perfectMatches, colorMatches };
 }
 
+// ---LOGIC TO REVEAL SECRET CODE---
+function revealSecretCode(){
+    secretStatusText.classList.add('hidden');
+    secretSlotsContainer.classList.remove('hidden');
+    const secretSlots = document.querySelectorAll('.secret-slot');
+    secretSlots.forEach((slot, index) => {
+        slot.classList.add(state.secretCode[index]);
+    })
+}
+
 // ===EVENT LISTENERS===
 
 // ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
@@ -181,27 +197,33 @@ submitGuessBtn.addEventListener('click', () => {
     if(result.perfectMatches === CODE_LENGTH){
         resultText.textContent = 'You win, you guessed right!!';
         state.isOver = true;
+        revealSecretCode();
 
         return;
     }
     
+    // change current row, update turn and clean currentGuess for new attempt
     document.getElementById(`row-${state.currentTurn}`).classList.remove('active');
     state.currentTurn++;
     state.currentGuess = [];
     
     // condition lose
     if(state.currentTurn >= ATTEMPTS){
-        result.textContent = 'You lose';
+        resultText.textContent = 'You lose';
         state.isOver = true;
+        revealSecretCode();
 
         return;
     }
-    
+
     document.getElementById(`row-${state.currentTurn}`).classList.add('active');
 
 
-
 });
+
+resetBtn.addEventListener('click', () => {
+    initGame();
+})
 
 // ***INITIALIZING THE GAME***
 initGame();
