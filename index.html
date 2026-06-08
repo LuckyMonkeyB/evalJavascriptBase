@@ -8,6 +8,42 @@
     <title>evalJavascriptBase</title>
 </head>
 <body>
+    <div class="game-container">
+        <h1>MasterMind</h1>
 
+        <!-- SECRET CODE HIDDEN -->
+        <div class="secret-code-section">
+            <span id="secret-status-text"> Secret Code</span>
+            <div id="secret-slots-container" class="hidden">
+                <div class="secret-slot"></div>
+                <div class="secret-slot"></div>
+                <div class="secret-slot"></div>
+                <div class="secret-slot"></div>
+            </div>
+        </div>
+
+        <!-- BOARD TO DISPLAY GUESSES -->
+        <div id="board"></div>
+
+        <!-- COLOR PICKER SECTION -->
+        <div class="color-picker">
+            <button class="color-peg red" aria-label="Select red diamond" data-color="red-diamond"></button>
+            <button class="color-peg green" aria-label="Select green circle" data-color="green-circle"></button>
+            <button class="color-peg blue" aria-label="Select blue square" data-color="blue-square"></button>
+            <button class="color-peg yellow" aria-label="Select yellow triangle" data-color="yellow-triangle"></button>
+        </div>
+
+        <!-- SECTION TO CHECK CODE -->
+        <div class="control-panel">
+            <button id="delete-btn">Delete</button>
+            <button id="submit-guess-btn">Check Code</button>
+            <button id="reset-btn">Reset</button>
+        </div>
+
+        <!-- SECTION FEEDBACK -->
+        <div id="feedback-display">
+            <p id="result-text"></p>
+        </div>
+    </div>
 </body>
 </html>

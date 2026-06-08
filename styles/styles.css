@@ -3,13 +3,66 @@
      box-sizing: border-box;
 }
 
-body{
-     margin: 0;
-     padding: 0;
-}
 
 img, picture, video, canvas, svg{
      display: block;
      max-width: 100%;
+}
+
+body{
+     margin: 0;
+     min-height: 100vh;
+     display: grid;
+     place-content: center;
+}
+
+.game-container {
+     background-color: lightblue;
+     border: 3px solid rgb(55, 131, 156);
+     border-radius: 20px;
+     display: flex; 
+     flex-direction: column;
+     justify-content: center; 
+     align-items: center;
+     gap: 1.5rem; padding: 2rem;
+     width: 400px;
+}
+
+#board {
+     display: flex; 
+     flex-direction: column-reverse; 
+     gap: 0.5rem; 
+     width: 100%;
+}
+
+.color-picker { 
+     display: flex; 
+     gap: 1rem; 
+}
+
+.color-peg{
+     width: 45px;
+     height: 45px;
+     cursor: pointer;
+     border: 1px solid rgba(255, 255, 255, 0.2);
+
+
+}
+
+.red{
+     background-color: red;
+}
+
+.green{
+     /* border-radius: 50%; */
+     background-color: green;
+}
+
+.blue{
+     background-color: blue;
+}
+
+.yellow{
+     background-color: yellow;
 }
 
