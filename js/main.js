@@ -1,9 +1,3 @@
-/*
--créer une suite de couleur random à deviner
--au click récup la couleur push dans un tableau (délégation d'event), affiche dans la ligne d'essai
--au click btn check compare le code secret avec la ligne d'essai, donner indices
-
-*/
 'use strict';
 
 // ===CONST & GLOBAL STATES===
@@ -38,11 +32,10 @@ function initGame(){
     state.currentGuess = [];
     state.currentTurn = 0;
     state.isOver = false;
-    
+
     resultText.textContent = '';
     secretStatusText.classList.remove('hidden');
     secretSlotsContainer.classList.add('hidden');
-
 
     generateSecretCode();
     setUpBoard();
@@ -82,21 +75,27 @@ function setUpBoard(){
             slotsContainer.appendChild(slot)
         }
 
-        // ???TODO??? CLUE pawn ELEMENTS
+        const clueContainer = document.createElement('div');
+        clueContainer.classList.add('clue-container');
+        for(let c = 0; c < CODE_LENGTH; c++){
+            const cluePawn = document.createElement('div');
+            cluePawn.classList.add('clue-pawn');
+            clueContainer.appendChild(cluePawn);
+        }
 
         rowDiv.appendChild(slotsContainer);
+        slotsContainer.appendChild(clueContainer);
         boardContainer.appendChild(rowDiv)
 
     }
 }
-
 
 // ---LOGIC TO DISPLAY ON THE BOARD USER'S GUESSES--- 
 function updateGuessDisplay(){
     const activeRow = document.getElementById(`row-${state.currentTurn}`);
     if(!activeRow) return; //exclusively the current row
 
-    const slots = document.querySelectorAll('.guess-slot');
+    const slots = activeRow.querySelectorAll('.guess-slot'); //!!! querySelectorAll on activeRow not document to access the current row !!!
     slots.forEach((slot, index) => {
         // clean before adding any class to prevent having previous classes
         slot.className = 'guess-slot';
@@ -164,9 +163,20 @@ function revealSecretCode(){
     })
 }
 
+// ---LOGIC DISPLAY CLUES---
+function displayClues(perfect, color){
+    const activeRow = document.getElementById(`row-${state.currentTurn}`);
+    const cluePawn = activeRow.querySelectorAll('.clue-pawn');
+
+    // for(let i = 0; i < perfect; i++){
+    //     if(cluePawn)
+    // }
+
+}
+
 // ===EVENT LISTENERS===
 
-// ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
+// ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)---
 colorPicker.addEventListener('click', (e) => {
     if(state.isOver) return;
 
@@ -180,12 +190,18 @@ colorPicker.addEventListener('click', (e) => {
 
 });
 
+// ---LOGIC TO HANDLE COMPARITION ON CLICK OF THE BUTTON CHECK---
 submitGuessBtn.addEventListener('click', () => {
     if(state.isOver) return; 
 
     // security if user attempts to check code before filling completly currentGuess
     if(state.currentGuess.length < CODE_LENGTH){
         resultText.textContent = 'Please select 4 colors before checking...'
+        
+        setTimeout(() => {
+            resultText.textContent = '';
+        }, 2000);
+
         return;
     }
 
@@ -198,7 +214,7 @@ submitGuessBtn.addEventListener('click', () => {
         resultText.textContent = 'You win, you guessed right!!';
         state.isOver = true;
         revealSecretCode();
-
+        // displayClues(result.perfectMatches, result.colorMatches);
         return;
     }
     
@@ -207,23 +223,29 @@ submitGuessBtn.addEventListener('click', () => {
     state.currentTurn++;
     state.currentGuess = [];
     
-    // condition lose
+    // condition loose
     if(state.currentTurn >= ATTEMPTS){
         resultText.textContent = 'You lose';
         state.isOver = true;
         revealSecretCode();
-
+        // displayClues(result.perfectMatches, result.colorMatches);
         return;
     }
 
     document.getElementById(`row-${state.currentTurn}`).classList.add('active');
 
-
 });
 
+// ---LOGIC TO RESET THE GAME---
 resetBtn.addEventListener('click', () => {
     initGame();
-})
+});
+
+// ---LOGIC TO DELETE CURRENT SLOT (GUESS SECTION)---
+deleteBtn.addEventListener('click', () => {
+    state.currentGuess.pop();
+    updateGuessDisplay();
+});
 
 // ***INITIALIZING THE GAME***
 initGame();
