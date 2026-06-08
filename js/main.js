@@ -1,5 +1,6 @@
 /*
--au click récup la couleur/forme push dans un tableau (délégation d'event), affiche dans la ligne d'essai
+-créer une suite de couleur random à deviner
+-au click récup la couleur push dans un tableau (délégation d'event), affiche dans la ligne d'essai
 -compare le code secret avec la ligne d'essai, donne indices
 -const tableau pour code secret en random
 -setTimeout + steInterval compte à rebours pour les 20s
@@ -23,10 +24,25 @@ const secretStatusText = document.getElementById('secret-status-text');
 const secretSlotsContainer = document.getElementById('secret-slots-container');
 const boardContainer = document.getElementById('board');
 const colorPicker = document.querySelector('.color-picker');
+const resultText = document.getElementById('result-text');
 
 const submitGuessBtn = document.getElementById('submit-guess-btn');
 const deleteBtn = document.getElementById('delete-btn');
 const resetBtn = document.getElementById('reset-btn');
+
+// ===GAME LOGIC===
+
+// ---LOGIC TO INITIALIZE THE GAME---
+function initGame(){
+    // make sure everything is cleaning before starting the game
+    state.secretCode= [];
+    state.currentGuess= [];
+    state.currentTurn= 0;
+    state.isGameOver= false;
+
+    generateScretCode();
+    setUpBoard();
+}
 
 // ---LOGIC TO GENERATE RANDOM SECRET CODE---
 function generateScretCode(){
@@ -42,7 +58,6 @@ function generateScretCode(){
 
 }
 
-generateScretCode();
 
 // ---LOGIC TO GENERATE DYNAMICALLY ROWS IN THE BOARD FOR USER GUESSES---
 function setUpBoard(){
@@ -63,22 +78,22 @@ function setUpBoard(){
         }
 
         // ???TODO??? CLUE pawn ELEMENTS
+
         rowDiv.appendChild(slotsContainer);
         boardContainer.appendChild(rowDiv)
 
     }
 }
 
-setUpBoard();
 
-// ---LOGIC TO DISPLAY ON THE BOARD USER'S GUESS--- 
+// ---LOGIC TO DISPLAY ON THE BOARD USER'S GUESSES--- 
 function updateGuessDisplay(){
     const activeRow = document.getElementById(`row-${state.currentTurn}`);
     if(!activeRow) return; //exclusively the current row
 
     const slots = document.querySelectorAll('.guess-slot');
     slots.forEach((slot, index) => {
-        // clean before adding any class
+        // clean before adding any class to prevent previous classes addition
         slot.className = 'guess-slot';
 
         // check if currentGuess has a color at this index so it can add it to the slot
@@ -88,14 +103,51 @@ function updateGuessDisplay(){
             console.log(slot);
         }
 
-    })
+    });
+}
+
+// ---LOGIC TO COMPARE SECRET CODE AND USER'S GUESS
+function checkGuess(secret, guess){
+    let perfectMatches = 0; // well placed and good color
+    let colorMatches = 0; // good color but misplaced
+
+    console.log('perfect matches before checking: ', perfectMatches);
+    console.log('color matches before checking: ', colorMatches);
+    
+    let secretCopy = [...secret];
+    let guessCopy = [...guess];
+    
+    // Check correct placement
+    for (let i = 0; i < CODE_LENGTH; i++) {
+        if (guessCopy[i] === secretCopy[i]) {
+            perfectMatches++;
+            // avoid double check for misplacement
+            guessCopy[i] = null;
+            secretCopy[i] = null;
+
+        }
+    }
+    console.log('perfect matches after checking: ', perfectMatches);
+    
+    // Check misplacement
+    for(let i = 0; i < CODE_LENGTH; i++){
+        if(guessCopy !== null){
+            
+
+        }
+    }
+    
+    console.log('color matches after checking: ', colorMatches);
+
+
+    return { perfectMatches, colorMatches };
 }
 
 // ===EVENT LISTENERS===
 
 // ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
 colorPicker.addEventListener('click', (e) => {
-    if(state.isGameOver) return; // can play if it is gameover
+    if(state.isGameOver) return;
 
     const clickedpawn = e.target.closest('.color-pawn');
     if(!clickedpawn) return; // security if clicked beside the pawn
@@ -105,4 +157,24 @@ colorPicker.addEventListener('click', (e) => {
     state.currentGuess.push(clickedpawn.dataset.color);
     updateGuessDisplay();
 
-})
+});
+
+submitGuessBtn.addEventListener('click', () => {
+    if (state.isGameOver) return; 
+
+    // security if user attempts to check code before filling completly currentGuess
+    if(state.currentGuess.length < CODE_LENGTH){
+        resultText.textContent = 'Please select 4 colors before checking...'
+        return;
+    }
+
+    const result = checkGuess(state.secretCode, state.currentGuess);
+
+
+
+
+
+});
+
+// ***INITIALIZING THE GAME***
+initGame();
