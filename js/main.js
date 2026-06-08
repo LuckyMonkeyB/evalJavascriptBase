@@ -1,9 +1,8 @@
 /*
 -créer une suite de couleur random à deviner
 -au click récup la couleur push dans un tableau (délégation d'event), affiche dans la ligne d'essai
--compare le code secret avec la ligne d'essai, donne indices
--const tableau pour code secret en random
--setTimeout + steInterval compte à rebours pour les 20s
+-au click btn check compare le code secret avec la ligne d'essai, donner indices
+
 */
 'use strict';
 
@@ -16,7 +15,7 @@ const state = {
     secretCode: [],
     currentGuess: [],
     currentTurn: 0,
-    isGameOver: false //flag
+    isOver: false //flag
 };
 
 // ===DOM ELEMENTS===
@@ -38,7 +37,7 @@ function initGame(){
     state.secretCode= [];
     state.currentGuess= [];
     state.currentTurn= 0;
-    state.isGameOver= false;
+    state.isOver= false;
 
     generateScretCode();
     setUpBoard();
@@ -132,7 +131,13 @@ function checkGuess(secret, guess){
     // Check misplacement
     for(let i = 0; i < CODE_LENGTH; i++){
         if(guessCopy !== null){
-            
+            // guessCopy[i] dans secretCopy
+            let colorAtIndex = secretCopy.indexOf(guessCopy[i]);
+            console.log(colorAtIndex);
+            if(colorAtIndex !== -1){
+                colorMatches++;
+                secretCopy[colorAtIndex] = null;
+            }
 
         }
     }
@@ -147,7 +152,7 @@ function checkGuess(secret, guess){
 
 // ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
 colorPicker.addEventListener('click', (e) => {
-    if(state.isGameOver) return;
+    if(state.isOver) return;
 
     const clickedpawn = e.target.closest('.color-pawn');
     if(!clickedpawn) return; // security if clicked beside the pawn
@@ -160,7 +165,7 @@ colorPicker.addEventListener('click', (e) => {
 });
 
 submitGuessBtn.addEventListener('click', () => {
-    if (state.isGameOver) return; 
+    if(state.isOver) return; 
 
     // security if user attempts to check code before filling completly currentGuess
     if(state.currentGuess.length < CODE_LENGTH){
@@ -170,7 +175,29 @@ submitGuessBtn.addEventListener('click', () => {
 
     const result = checkGuess(state.secretCode, state.currentGuess);
 
+    console.log('result: ',result);
 
+    // condition win
+    if(result.perfectMatches === CODE_LENGTH){
+        resultText.textContent = 'You win, you guessed right!!';
+        state.isOver = true;
+
+        return;
+    }
+    
+    document.getElementById(`row-${state.currentTurn}`).classList.remove('active');
+    state.currentTurn++;
+    state.currentGuess = [];
+    
+    // condition lose
+    if(state.currentTurn >= ATTEMPTS){
+        result.textContent = 'You lose';
+        state.isOver = true;
+
+        return;
+    }
+    
+    document.getElementById(`row-${state.currentTurn}`).classList.add('active');
 
 
 
