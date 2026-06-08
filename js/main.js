@@ -7,7 +7,7 @@
 'use strict';
 
 // ===CONST & GLOBAL STATES===
-const COLORS = ['red', 'green', 'blue', 'yellow'];
+const COLORS = ['red-diamond', 'green-circle', 'blue-square', 'yellow-triangle'];
 const CODE_LENGTH = 4;
 const ATTEMPTS = 10;
 
@@ -15,7 +15,7 @@ const state = {
     secretCode: [],
     currentGuess: [],
     currentTurn: 0,
-    isGameOver: false
+    isGameOver: false //flag
 };
 
 // ===DOM ELEMENTS===
@@ -61,7 +61,7 @@ function setUpBoard(){
             slotsContainer.appendChild(slot)
         }
 
-        // ???TODO??? CLUE PEG ELEMENTS
+        // ???TODO??? CLUE pawn ELEMENTS
         rowDiv.appendChild(slotsContainer);
         boardContainer.appendChild(rowDiv)
 
@@ -70,6 +70,20 @@ function setUpBoard(){
 
 setUpBoard();
 
+// ---LOGIC TO DISPLAY ON THE BOARD USER'S GUESS--- 
+
 // ===EVENT LISTENERS===
 
 // ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
+colorPicker.addEventListener('click', (e) => {
+    if(state.isGameOver) return; // can play if it is gameover
+
+    const clickedpawn = e.target.closest('.color-pawn');
+    if(!clickedpawn) return; // security if clicked beside the pawn
+
+    if(state.currentGuess.length >= CODE_LENGTH) return; //security if currentGuess is already full
+
+    state.currentGuess.push(clickedpawn.dataset.color);
+    updateGuessDisplay();
+
+})
