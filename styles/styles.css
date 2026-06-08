@@ -1,0 +1,15 @@
+/* Hard Base Reset */
+*, *::before, *::after{
+     box-sizing: border-box;
+}
+
+body{
+     margin: 0;
+     padding: 0;
+}
+
+img, picture, video, canvas, svg{
+     display: block;
+     max-width: 100%;
+}
+
