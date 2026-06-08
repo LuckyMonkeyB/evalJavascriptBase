@@ -30,7 +30,7 @@ const resetBtn = document.getElementById('reset-btn');
 
 // ---LOGIC TO GENERATE RANDOM SECRET CODE---
 function generateScretCode(){
-    state.secretCode = [];
+    state.secretCode = []; //cleaning before generating new code
 
     for(let i = 0; i < CODE_LENGTH; i++){
         const randomIndex = Math.floor(Math.random() * COLORS.length);
@@ -44,7 +44,32 @@ function generateScretCode(){
 
 generateScretCode();
 
+// ---LOGIC TO GENERATE DYNAMICALLY ROWS IN THE BOARD FOR USER GUESSES---
+function setUpBoard(){
+    boardContainer.innerHTML = ''; //cleaning 
+    for(let r = 0; r < ATTEMPTS; r++){
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row');
+        rowDiv.id = `row-${r}`;
 
+        // create guess slots
+        const slotsContainer = document.createElement('div');
+        slotsContainer.classList.add('row-slots');
+        for(let s = 0; s < CODE_LENGTH; s++){
+            const slot = document.createElement('div');
+            slot.classList.add('guess-slot');
+            slotsContainer.appendChild(slot)
+        }
 
+        // ???TODO??? CLUE PEG ELEMENTS
+        rowDiv.appendChild(slotsContainer);
+        boardContainer.appendChild(rowDiv)
 
+    }
+}
 
+setUpBoard();
+
+// ===EVENT LISTENERS===
+
+// ---LOGIC FOR COLOR SELECTION HANDLER (EVENT DELEGATION)
